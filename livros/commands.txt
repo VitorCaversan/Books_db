@@ -1,0 +1,8 @@
+sudo mysql --local-infile=1 -u root -p < livros-db-MySQL.sql
+
+In mysql using prompt:
+   set global local_infile=1;
+   quit;
+   mysql --local-infile=1 -u root -p
+   load data local infile 'livros-db.csv' into table livros fields terminated by ';' enclosed by '"' lines terminated by '\n' ignore 1 rows (livro_id, titulo, autor, edicao, ano, editora, genero_id,
+   descricao, preco, estoque, reserva);
