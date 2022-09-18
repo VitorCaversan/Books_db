@@ -1,5 +1,3 @@
-# Books_db
-A Database of books with blobs as book covers
 # Books_db: João Vitor Caversan e Alfons Heiermann
 Com base em arquivos postados na página da disciplina (livros-db-MySQL.sql e livos-db.csv), foi requisitado criar um banco de dados e preencher a tabela livros e inserir as capas destes nos campos mediumblob.
 
