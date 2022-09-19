@@ -48,9 +48,6 @@ public class BookBrowser {
             prepStm.setInt(2, res_set.getInt(1));
             prepStm.setBytes(1, buffer.toByteArray());
             prepStm.executeUpdate();          
-        }   
-            
-        
-    }
-    
+        }                     
+    }   
 }

@@ -5,6 +5,7 @@
 package Browsing;
 
 import java.sql.*;
+import javax.swing.*;
 
 /**
  *
@@ -28,24 +29,28 @@ public class Interface extends javax.swing.JFrame {
         con = DriverManager.getConnection(url, user, password);
 
         // Create a statement: an execution line
-        start = con.createStatement();
+        start = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
         
-        rs = start.executeQuery("select livro_id, titulo, autor, edicao, ano, editora, genero_id, descricao, preco, estoque, reserva from livros");
+        rs = start.executeQuery("select l.livro_id, l.titulo, l.autor, l.edicao, "
+                + "l.ano, l.editora, l.genero_id, g.descricao, l.descricao, "
+                + "l.preco, l.estoque, l.reserva, l.capa from livros l join generos g "
+                + "where l.genero_id = g.genero_id");
         
         if (rs.next())
         {
-            jTextField1.setText(rs.getString("livro_id"));
-            jTextField2.setText(rs.getString("titulo"));
-            jTextField3.setText(rs.getString("autor"));
-            jTextField4.setText(rs.getString("edicao"));
-            jTextField5.setText(rs.getString("ano"));
-            jTextField6.setText(rs.getString("editora"));
-            jTextField7.setText(rs.getString("genero_id"));
-            jTextField8.setText(rs.getString("descricao"));
-            jTextField9.setText(rs.getString("preco"));
-            jTextField10.setText(rs.getString("estoque"));
-            jTextField11.setText(rs.getString("reserva"));
-                 
+            jTextField1.setText(rs.getString("l.livro_id"));
+            jTextField2.setText(rs.getString("l.titulo"));
+            jTextField3.setText(rs.getString("l.autor"));
+            jTextField4.setText(rs.getString("l.edicao"));
+            jTextField5.setText(rs.getString("l.ano"));
+            jTextField6.setText(rs.getString("l.editora"));
+            jTextField7.setText(rs.getString("l.genero_id"));
+            jTextField12.setText(rs.getString("g.descricao"));
+            jTextField8.setText(rs.getString("l.descricao"));
+            jTextField9.setText(rs.getString("l.preco"));
+            jTextField10.setText(rs.getString("l.estoque"));
+            jTextField11.setText(rs.getString("l.reserva"));
+            jLabel12.setIcon(new ImageIcon(rs.getBytes("l.capa")));                
         }
 
     }
@@ -85,6 +90,9 @@ public class Interface extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jTextField12 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -100,7 +108,7 @@ public class Interface extends javax.swing.JFrame {
 
         jLabel6.setText("Editora:");
 
-        jLabel7.setText("Genero ID:");
+        jLabel7.setText("Gênero ID:");
 
         jLabel8.setText("Descrição:");
 
@@ -144,8 +152,18 @@ public class Interface extends javax.swing.JFrame {
         });
 
         jButton3.setText("Próximo");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Último");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jButton1.setText("Primeiro");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -153,6 +171,13 @@ public class Interface extends javax.swing.JFrame {
                 jButton1ActionPerformed(evt);
             }
         });
+
+        jLabel12.setBorder(javax.swing.BorderFactory.createTitledBorder("Capa"));
+
+        jLabel13.setText("Gênero:");
+
+        jTextField12.setColumns(30);
+        jTextField12.setText("jTextField12");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -182,7 +207,11 @@ public class Interface extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addGap(18, 18, 18)
@@ -198,20 +227,23 @@ public class Interface extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jTextField10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(48, 48, 48)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jButton1)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jButton2)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jButton3)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jButton4))
+                                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 490, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel11)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton1)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton2)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton3)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton4))
-                            .addComponent(jTextField11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(jTextField11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -244,7 +276,9 @@ public class Interface extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13)
+                    .addComponent(jTextField12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
@@ -256,18 +290,17 @@ public class Interface extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
-                    .addComponent(jTextField10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextField10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2)
+                    .addComponent(jButton3)
+                    .addComponent(jButton4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
                     .addComponent(jTextField11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(30, 30, 30)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3)
-                    .addComponent(jButton4)
-                    .addComponent(jButton1))
-                .addContainerGap(40, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel12, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE))
         );
 
         pack();
@@ -277,18 +310,19 @@ public class Interface extends javax.swing.JFrame {
         try{
             if (rs.previous())
             {
-                jTextField1.setText(rs.getString("livro_id"));
-                jTextField2.setText(rs.getString("titulo"));
-                jTextField3.setText(rs.getString("autor"));
-                jTextField4.setText(rs.getString("edicao"));
-                jTextField5.setText(rs.getString("ano"));
-                jTextField6.setText(rs.getString("editora"));
-                jTextField7.setText(rs.getString("genero_id"));
-                jTextField8.setText(rs.getString("descricao"));
-                jTextField9.setText(rs.getString("preco"));
-                jTextField10.setText(rs.getString("estoque"));
-                jTextField11.setText(rs.getString("reserva"));
-
+                jTextField1.setText(rs.getString("l.livro_id"));
+                jTextField2.setText(rs.getString("l.titulo"));
+                jTextField3.setText(rs.getString("l.autor"));
+                jTextField4.setText(rs.getString("l.edicao"));
+                jTextField5.setText(rs.getString("l.ano"));
+                jTextField6.setText(rs.getString("l.editora"));
+                jTextField7.setText(rs.getString("l.genero_id"));
+                jTextField12.setText(rs.getString("g.descricao"));
+                jTextField8.setText(rs.getString("l.descricao"));
+                jTextField9.setText(rs.getString("l.preco"));
+                jTextField10.setText(rs.getString("l.estoque"));
+                jTextField11.setText(rs.getString("l.reserva"));
+                jLabel12.setIcon(new ImageIcon(rs.getBytes("l.capa")));
             }
         }
         catch (SQLException exc1){
@@ -300,24 +334,73 @@ public class Interface extends javax.swing.JFrame {
         try{
             if (rs.first())
             {
-                jTextField1.setText(rs.getString("livro_id"));
-                jTextField2.setText(rs.getString("titulo"));
-                jTextField3.setText(rs.getString("autor"));
-                jTextField4.setText(rs.getString("edicao"));
-                jTextField5.setText(rs.getString("ano"));
-                jTextField6.setText(rs.getString("editora"));
-                jTextField7.setText(rs.getString("genero_id"));
-                jTextField8.setText(rs.getString("descricao"));
-                jTextField9.setText(rs.getString("preco"));
-                jTextField10.setText(rs.getString("estoque"));
-                jTextField11.setText(rs.getString("reserva"));
-
+                jTextField1.setText(rs.getString("l.livro_id"));
+                jTextField2.setText(rs.getString("l.titulo"));
+                jTextField3.setText(rs.getString("l.autor"));
+                jTextField4.setText(rs.getString("l.edicao"));
+                jTextField5.setText(rs.getString("l.ano"));
+                jTextField6.setText(rs.getString("l.editora"));
+                jTextField7.setText(rs.getString("l.genero_id"));
+                jTextField12.setText(rs.getString("g.descricao"));
+                jTextField8.setText(rs.getString("l.descricao"));
+                jTextField9.setText(rs.getString("l.preco"));
+                jTextField10.setText(rs.getString("l.estoque"));
+                jTextField11.setText(rs.getString("l.reserva"));
+                jLabel12.setIcon(new ImageIcon(rs.getBytes("l.capa")));
             }
         }
         catch (SQLException exc1){
             System.out.println("erro db: " + exc1);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        try{
+            if (rs.next())
+            {
+                jTextField1.setText(rs.getString("l.livro_id"));
+                jTextField2.setText(rs.getString("l.titulo"));
+                jTextField3.setText(rs.getString("l.autor"));
+                jTextField4.setText(rs.getString("l.edicao"));
+                jTextField5.setText(rs.getString("l.ano"));
+                jTextField6.setText(rs.getString("l.editora"));
+                jTextField7.setText(rs.getString("l.genero_id"));
+                jTextField12.setText(rs.getString("g.descricao"));
+                jTextField8.setText(rs.getString("l.descricao"));
+                jTextField9.setText(rs.getString("l.preco"));
+                jTextField10.setText(rs.getString("l.estoque"));
+                jTextField11.setText(rs.getString("l.reserva"));
+                jLabel12.setIcon(new ImageIcon(rs.getBytes("l.capa")));
+            }
+        }
+        catch (SQLException exc1){
+            System.out.println("erro db: " + exc1);
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        try{
+            if (rs.last())
+            {
+                jTextField1.setText(rs.getString("l.livro_id"));
+                jTextField2.setText(rs.getString("l.titulo"));
+                jTextField3.setText(rs.getString("l.autor"));
+                jTextField4.setText(rs.getString("l.edicao"));
+                jTextField5.setText(rs.getString("l.ano"));
+                jTextField6.setText(rs.getString("l.editora"));
+                jTextField7.setText(rs.getString("l.genero_id"));
+                jTextField12.setText(rs.getString("g.descricao"));
+                jTextField8.setText(rs.getString("l.descricao"));
+                jTextField9.setText(rs.getString("l.preco"));
+                jTextField10.setText(rs.getString("l.estoque"));
+                jTextField11.setText(rs.getString("l.reserva"));
+                jLabel12.setIcon(new ImageIcon(rs.getBytes("l.capa")));
+            }
+        }
+        catch (SQLException exc1){
+            System.out.println("erro db: " + exc1);
+        }
+    }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -347,9 +430,15 @@ public class Interface extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
+
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Interface().setVisible(true);
+                try{
+                    new Interface().setVisible(true);
+                }catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -362,6 +451,8 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -373,6 +464,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField10;
     private javax.swing.JTextField jTextField11;
+    private javax.swing.JTextField jTextField12;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
